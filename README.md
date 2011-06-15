@@ -26,4 +26,4 @@ API
 
     aleppo:process_tokens(Tokens, Options) -> {ok, NewTokens} | {error, Error}
 
-        Options = [{file, FileName}]
+        Options = [{file, FileName}, {include, [IncludeSearchDirectories]}]
