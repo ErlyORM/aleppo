@@ -1,7 +1,7 @@
 Aleppo: ALternative Erlang Pre-ProcessOr
 ========================================
 
-Aleppo is an alternative to epp(3erl), and is mainly intended for Erlang compiler hackers.
+Aleppo is an alternative to `epp(3erl)`, and is mainly intended for Erlang compiler hackers. The problem with EPP is that it only operates on Erlang source files. Aleppo will operate directly on tokens returned by erl_scan.
 
     erl_scan -> *aleppo* -> erl_parse -> compile
 
@@ -27,3 +27,9 @@ API
     aleppo:process_tokens(Tokens, Options) -> {ok, NewTokens} | {error, Error}
 
         Options = [{file, FileName}, {include, [IncludeSearchDirectories]}]
+
+
+Notes
+-----
+
+When calling erl_scan:tokens/3, be sure to pass in a `{Row, Column}` tuple as the third argument (not just a Row integer). Otherwise Aleppo will not properly handle `-include` directives.
