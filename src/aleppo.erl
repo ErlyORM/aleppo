@@ -107,7 +107,8 @@ process_tree([Node|Rest], TokenAcc, Context) ->
                 {ok, {DefinedArgs, DefinedTokens}} ->
                     expand_macro_fun(Loc, DefinedArgs, DefinedTokens, MacroArgs);
                 _ ->
-                    dict:fetch(MacroName, Context#ale_context.macro_dict)
+                    MacroArgsWithCommas = insert_comma_tokens(MacroArgs, Loc),
+                    dict:fetch(MacroName, Context#ale_context.macro_dict) ++ [{'(', Loc}|MacroArgsWithCommas] ++ [{')', Loc}]
             end,
             {_, RevProcessedTokens} = process_tree(InsertTokens, [], Context),
             process_tree(Rest, RevProcessedTokens ++ TokenAcc, Context);
