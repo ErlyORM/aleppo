@@ -103,8 +103,12 @@ process_tree([Node|Rest], TokenAcc, Context) ->
             {_, RevProcessedTokens} = process_tree(InsertTokens, [], Context),
             process_tree(Rest, RevProcessedTokens ++ TokenAcc, Context);
         {'macro', {_Type, Loc, MacroName}, MacroArgs} ->
-            {DefinedArgs, DefinedTokens} = dict:fetch({MacroName, length(MacroArgs)}, Context#ale_context.macro_dict),
-            InsertTokens = expand_macro_fun(Loc, DefinedArgs, DefinedTokens, MacroArgs),
+            InsertTokens = case dict:find({MacroName, length(MacroArgs)}, Context#ale_context.macro_dict) of
+                {ok, {DefinedArgs, DefinedTokens}} ->
+                    expand_macro_fun(Loc, DefinedArgs, DefinedTokens, MacroArgs);
+                _ ->
+                    dict:fetch(MacroName, Context#ale_context.macro_dict)
+            end,
             {_, RevProcessedTokens} = process_tree(InsertTokens, [], Context),
             process_tree(Rest, RevProcessedTokens ++ TokenAcc, Context);
         OtherToken ->
