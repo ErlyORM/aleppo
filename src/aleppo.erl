@@ -33,26 +33,31 @@ process_tokens(Tokens, Options) ->
     end.
 
 process_tree(ParseTree, Options) ->
-    {Dict0, IncludeTrail, IncludeDirs, TokenAcc} = case proplists:get_value(file, Options) of
-        undefined -> {dict:new(), [], ["."], []};
-        FileName -> {dict:store('FILE', [{string, 1, FileName}], dict:new()),
-                [filename:absname(FileName)],
-                [".", filename:dirname(FileName)],
-                lists:reverse(file_attribute_tokens(FileName, 1))}
-    end,
+    {Dict0, IncludeTrail, IncludeDirs, TokenAcc} =
+        case proplists:get_value(file, Options) of
+            undefined -> {dict:new(), [], ["."], []};
+            FileName -> {dict:store('FILE', [{string, 1, FileName}], dict:new()),
+                         [filename:absname(FileName)],
+                         [".", filename:dirname(FileName)],
+                         lists:reverse(file_attribute_tokens(FileName, 1))}
+        end,
 
     Dict1 = case proplists:get_value(module, Options) of
-        undefined -> Dict0;
-        Module ->
-            dict:store('MODULE', [{atom, 1, Module}],
-                dict:store('MODULE_NAME', [{string, 1, atom_to_list(Module)}], Dict0))
-    end,
+                undefined -> Dict0;
+                Module ->
+                    dict:store('MODULE', [{atom, 1, Module}],
+                               dict:store('MODULE_NAME',
+                                          [{string, 1, atom_to_list(Module)}],
+                                          Dict0))
+            end,
 
-    Dict2 = dict:store('MACHINE',  [{atom, 1, list_to_atom(erlang:system_info(machine))}], Dict1),
+    Dict2 = dict:store('MACHINE',
+                       [{atom, 1, list_to_atom(erlang:system_info(machine))}],
+                       Dict1),
 
     Context = #ale_context{
         include_trail = IncludeTrail,
-        include_dirs = IncludeDirs ++ proplists:get_value(include, Options, []), 
+        include_dirs = IncludeDirs ++ proplists:get_value(include, Options, []),
         macro_dict = Dict2 },
 
     case catch process_tree(ParseTree, TokenAcc, Context) of
@@ -67,33 +72,61 @@ process_tree([], TokenAcc, Context) ->
 process_tree([Node|Rest], TokenAcc, Context) ->
     case Node of
         {'macro_define', {_Type, Loc, MacroName}} ->
-            NewDict = dict:store(MacroName, [{atom,Loc,true}], Context#ale_context.macro_dict),
-            process_tree(Rest, TokenAcc, Context#ale_context{ macro_dict = NewDict });
+            NewDict = dict:store(MacroName,
+                                 [{atom, Loc, true}],
+                                 Context#ale_context.macro_dict),
+            process_tree(Rest,
+                         TokenAcc,
+                         Context#ale_context{ macro_dict = NewDict });
         {'macro_define', {_Type, _Loc, MacroName}, MacroTokens} ->
-            NewDict = dict:store(MacroName, MacroTokens, Context#ale_context.macro_dict),
-            process_tree(Rest, TokenAcc, Context#ale_context{ macro_dict = NewDict });
+            NewDict = dict:store(MacroName,
+                                 MacroTokens,
+                                 Context#ale_context.macro_dict),
+            process_tree(Rest,
+                         TokenAcc,
+                         Context#ale_context{ macro_dict = NewDict });
         {'macro_define', {_Type, _Loc, MacroName}, MacroArgs, MacroTokens} ->
-            NewDict = dict:store({MacroName, length(MacroArgs)}, {MacroArgs, MacroTokens}, Context#ale_context.macro_dict),
-            process_tree(Rest, TokenAcc, Context#ale_context{ macro_dict = NewDict });
+            NewDict = dict:store({MacroName, length(MacroArgs)},
+                                 {MacroArgs, MacroTokens},
+                                 Context#ale_context.macro_dict),
+            process_tree(Rest,
+                         TokenAcc,
+                         Context#ale_context{ macro_dict = NewDict });
         {'macro_undef', {_Type, _Loc, MacroName}} ->
             NewDict = dict:erase(MacroName, Context#ale_context.macro_dict),
-            process_tree(Rest, TokenAcc, Context#ale_context{ macro_dict = NewDict });
+            process_tree(Rest,
+                         TokenAcc,
+                         Context#ale_context{ macro_dict = NewDict });
         {'macro_include', {string, Loc, FileName}} ->
             AbsName = expand_filename(FileName, Context),
             {NewDict, IncludeTokens} = process_inclusion(AbsName, Loc, Context),
-            process_tree(Rest, IncludeTokens ++ TokenAcc, Context#ale_context{ macro_dict = NewDict });
+            process_tree(Rest,
+                         IncludeTokens ++ TokenAcc,
+                         Context#ale_context{ macro_dict = NewDict });
         {'macro_include_lib', {string, Loc, FileName}} ->
             AbsName = expand_include_lib(FileName),
             {NewDict, IncludeTokens} = process_inclusion(AbsName, Loc, Context),
-            process_tree(Rest, IncludeTokens ++ TokenAcc, Context#ale_context{ macro_dict = NewDict });
+            process_tree(Rest,
+                         IncludeTokens ++ TokenAcc,
+                         Context#ale_context{ macro_dict = NewDict });
         {'macro_ifdef', {_Type, _Loc, MacroName}, IfBody} ->
             process_ifelse(Rest, MacroName, IfBody, [], TokenAcc, Context);
         {'macro_ifdef', {_Type, _Loc, MacroName}, IfBody, ElseBody} ->
-            process_ifelse(Rest, MacroName, IfBody, ElseBody, TokenAcc, Context);
+            process_ifelse(Rest,
+                           MacroName,
+                           IfBody,
+                           ElseBody,
+                           TokenAcc,
+                           Context);
         {'macro_ifndef', {_Type, _Loc, MacroName}, IfBody} ->
             process_ifelse(Rest, MacroName, [], IfBody, TokenAcc, Context);
         {'macro_ifndef', {_Type, _Loc, MacroName}, IfBody, ElseBody} ->
-            process_ifelse(Rest, MacroName, ElseBody, IfBody, TokenAcc, Context);
+            process_ifelse(Rest,
+                           MacroName,
+                           ElseBody,
+                           IfBody,
+                           TokenAcc,
+                           Context);
         {'macro', {var, {Line, _Col} = Loc, 'LINE'}} ->
             process_tree(Rest, [{integer, Loc, Line}|TokenAcc], Context);
         {'macro', {var, Line, 'LINE'}} when is_integer(Line) ->
@@ -102,17 +135,25 @@ process_tree([Node|Rest], TokenAcc, Context) ->
             {Line, _} = location(Attrs),
             process_tree(Rest, [{integer, Attrs, Line}|TokenAcc], Context);
         {'macro', {_Type, _Loc, MacroName}} ->
-            InsertTokens = dict:fetch(MacroName, Context#ale_context.macro_dict),
+            InsertTokens = dict:fetch(MacroName,
+                                      Context#ale_context.macro_dict),
             {_, RevProcessedTokens} = process_tree(InsertTokens, [], Context),
             process_tree(Rest, RevProcessedTokens ++ TokenAcc, Context);
         {'macro', {_Type, Loc, MacroName}, MacroArgs} ->
-            InsertTokens = case dict:find({MacroName, length(MacroArgs)}, Context#ale_context.macro_dict) of
-                {ok, {DefinedArgs, DefinedTokens}} ->
-                    expand_macro_fun(Loc, DefinedArgs, DefinedTokens, MacroArgs);
-                _ ->
-                    MacroArgsWithCommas = insert_comma_tokens(MacroArgs, Loc),
-                    dict:fetch(MacroName, Context#ale_context.macro_dict) ++ [{'(', Loc}|MacroArgsWithCommas] ++ [{')', Loc}]
-            end,
+            InsertTokens =
+                case dict:find({MacroName, length(MacroArgs)},
+                               Context#ale_context.macro_dict) of
+                    {ok, {DefinedArgs, DefinedTokens}} ->
+                        expand_macro_fun(Loc,
+                                         DefinedArgs,
+                                         DefinedTokens,
+                                         MacroArgs);
+                    _ ->
+                        MacroArgsWithCommas = insert_comma_tokens(MacroArgs,
+                                                                  Loc),
+                        dict:fetch(MacroName, Context#ale_context.macro_dict)
+                            ++ [{'(', Loc}|MacroArgsWithCommas] ++ [{')', Loc}]
+                end,
             {_, RevProcessedTokens} = process_tree(InsertTokens, [], Context),
             process_tree(Rest, RevProcessedTokens ++ TokenAcc, Context);
         OtherToken ->
@@ -125,7 +166,9 @@ process_ifelse(Rest, MacroName, IfBody, ElseBody, TokenAcc, Context) ->
         false -> ElseBody
     end,
     {NewDict, NewTokens} = process_tree(ChooseBody, [], Context),
-    process_tree(Rest, NewTokens ++ TokenAcc, Context#ale_context{ macro_dict = NewDict }).
+    process_tree(Rest,
+                 NewTokens ++ TokenAcc,
+                 Context#ale_context{ macro_dict = NewDict }).
 
 process_inclusion(FileName, {Line, _}, Context) ->
     process_inclusion(FileName, Line, Context);
@@ -140,21 +183,33 @@ process_inclusion(FileName, Line, Context) ->
                 {ok, ParseTree} ->
                     [{eof, _}|Rest] = lists:reverse(ParseTree),
                     ParseTreeNoEOF = lists:reverse(Rest),
-                    ThisFile = case dict:find('FILE', Context#ale_context.macro_dict) of
-                        {ok, Val} -> Val;
-                        _ -> undefined
-                    end,
-                    Dict1 = dict:store('FILE', [{string, 1, FileName}], Context#ale_context.macro_dict),
-                    TokenAcc = lists:reverse(file_attribute_tokens(FileName, 1)),
-                    {Dict2, IncludedTokens} = process_tree(ParseTreeNoEOF, TokenAcc, 
-                        Context#ale_context{
-                            macro_dict = Dict1,
-                            include_trail = [FileName|Context#ale_context.include_trail]}),
+                    ThisFile =
+                        case dict:find('FILE',
+                                       Context#ale_context.macro_dict) of
+                            {ok, Val} -> Val;
+                            _ -> undefined
+                        end,
+                    Dict1 = dict:store('FILE',
+                                       [{string, 1, FileName}],
+                                       Context#ale_context.macro_dict),
+                    TokenAcc = lists:reverse(file_attribute_tokens(FileName,
+                                                                   1)),
+                    {Dict2, IncludedTokens} =
+                        process_tree(ParseTreeNoEOF,
+                                     TokenAcc,
+                                     Context#ale_context{
+                                       macro_dict = Dict1,
+                                       include_trail =
+                                           [FileName
+                                            |Context#ale_context.include_trail
+                                           ]}),
                     case ThisFile of
                         undefined -> {Dict2, IncludedTokens};
                         [{string, _Loc, ThisFileName}] ->
                             {dict:store('FILE', ThisFile, Dict2),
-                                lists:reverse(file_attribute_tokens(ThisFileName, Line)) ++ IncludedTokens}
+                             lists:reverse(file_attribute_tokens(ThisFileName,
+                                                                 Line))
+                             ++ IncludedTokens}
                     end;
                 Error ->
                     throw(Error)
@@ -162,8 +217,14 @@ process_inclusion(FileName, Line, Context) ->
     end.
 
 file_attribute_tokens(FileName, Line) ->
-    [{'-', Line}, {atom, Line, 'file'}, {'(', Line}, {string, Line, FileName}, {',', Line},
-        {integer, Line, Line}, {')', Line}, {dot, Line}].
+    [{'-', Line},
+     {atom, Line, 'file'},
+     {'(', Line},
+     {string, Line, FileName},
+     {',', Line},
+     {integer, Line, Line},
+     {')', Line},
+     {dot, Line}].
 
 expand_include_lib(FileName) ->
     [Lib | Rest] = filename:split(FileName),
@@ -239,7 +300,9 @@ scan_tokens(Data, StartLocation) ->
     end.
 
 expand_macro_fun(Loc, DefinedArgs, DefinedTokens, ApplyArgs) ->
-    ExpandedTokens = replace_macro_strings(DefinedTokens, DefinedArgs, ApplyArgs),
+    ExpandedTokens = replace_macro_strings(DefinedTokens,
+                                           DefinedArgs,
+                                           ApplyArgs),
     DefinedArgsWithCommas = insert_comma_tokens(DefinedArgs, Loc),
     ApplyArgsWithCommas = insert_comma_tokens(ApplyArgs, Loc),
     [{'(', Loc}, {'fun', Loc}, {'(', Loc}|DefinedArgsWithCommas] ++
@@ -248,16 +311,23 @@ expand_macro_fun(Loc, DefinedArgs, DefinedTokens, ApplyArgs) ->
         [{')', Loc}].
 
 replace_macro_strings(DefinedTokens, DefinedArgs, ApplyArgs) ->
-    MacroStringDict = dict:from_list(lists:zipwith(fun([{var, _, VarName}], ApplyTokens) ->
-                    ArgAsString = stringify_tokens(ApplyTokens),
-                    {VarName, ArgAsString}
-            end, DefinedArgs, ApplyArgs)),
+    Fun = fun([{var, _, VarName}], ApplyTokens) ->
+                  ArgAsString = stringify_tokens(ApplyTokens),
+                  {VarName, ArgAsString}
+          end,
+    MacroStringDict = dict:from_list(lists:zipwith(Fun,
+                                                   DefinedArgs,
+                                                   ApplyArgs)),
     replace_macro_strings1(DefinedTokens, MacroStringDict, []).
 
 replace_macro_strings1([], _, Acc) ->
     lists:reverse(Acc);
-replace_macro_strings1([{'macro_string', {var, Loc, VarName}}|Rest], MacroStringDict, Acc) ->
-    replace_macro_strings1(Rest, MacroStringDict, [{string, Loc, dict:fetch(VarName, MacroStringDict)}|Acc]);
+replace_macro_strings1([{'macro_string', {var, Loc, VarName}}|Rest],
+                       MacroStringDict,
+                       Acc) ->
+    replace_macro_strings1(Rest, MacroStringDict,
+                           [{string, Loc, dict:fetch(VarName, MacroStringDict)}
+                            |Acc]);
 replace_macro_strings1([OtherToken|Rest], MacroStringDict, Acc) ->
     replace_macro_strings1(Rest, MacroStringDict, [OtherToken|Acc]).
 
@@ -301,7 +371,7 @@ mark_keywords([{'-', DashAttrs} = Dash,
          {DashLine, _}} ->
             mark_keywords(Rest, ModuleName, [ModToken, Paren, Token, Dash|Acc]);
         _ ->
-            mark_keywords(Rest, undefined, [ModToken, Paren, Token, Dash|Acc])
+            mark_keywords([Token, Paren, ModToken|Rest], undefined, [Dash|Acc])
     end;
 mark_keywords([{'-', DashAttrs} = Dash,
                {atom, AtomAttrs, Atom} = Token|Rest],
