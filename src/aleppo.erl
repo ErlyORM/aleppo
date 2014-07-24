@@ -1,4 +1,4 @@
-% Aleppo: ALternative Erlang Pre-ProcessOr 
+% Aleppo: ALternative Erlang Pre-ProcessOr
 -module(aleppo).
 -export([process_file/1, process_tokens/1, process_tokens/2, scan_file/1]).
 
@@ -36,22 +36,22 @@ process_tree(ParseTree, Options) ->
     {Dict0, IncludeTrail, IncludeDirs, TokenAcc} = case proplists:get_value(file, Options) of
         undefined -> {dict:new(), [], ["."], []};
         FileName -> {dict:store('FILE', [{string, 1, FileName}], dict:new()),
-                [filename:absname(FileName)], 
+                [filename:absname(FileName)],
                 [".", filename:dirname(FileName)],
                 lists:reverse(file_attribute_tokens(FileName, 1))}
     end,
 
     Dict1 = case proplists:get_value(module, Options) of
         undefined -> Dict0;
-        Module -> 
-            dict:store('MODULE', [{atom, 1, Module}], 
+        Module ->
+            dict:store('MODULE', [{atom, 1, Module}],
                 dict:store('MODULE_NAME', [{string, 1, atom_to_list(Module)}], Dict0))
     end,
 
     Dict2 = dict:store('MACHINE',  [{atom, 1, list_to_atom(erlang:system_info(machine))}], Dict1),
 
-    Context = #ale_context{ 
-        include_trail = IncludeTrail, 
+    Context = #ale_context{
+        include_trail = IncludeTrail,
         include_dirs = IncludeDirs ++ proplists:get_value(include, Options, []), 
         macro_dict = Dict2 },
 
@@ -98,6 +98,9 @@ process_tree([Node|Rest], TokenAcc, Context) ->
             process_tree(Rest, [{integer, Loc, Line}|TokenAcc], Context);
         {'macro', {var, Line, 'LINE'}} when is_integer(Line) ->
             process_tree(Rest, [{integer, Line, Line}|TokenAcc], Context);
+        {'macro', {var, Attrs, 'LINE'}} ->
+            {Line, _} = location(Attrs),
+            process_tree(Rest, [{integer, Attrs, Line}|TokenAcc], Context);
         {'macro', {_Type, _Loc, MacroName}} ->
             InsertTokens = dict:fetch(MacroName, Context#ale_context.macro_dict),
             {_, RevProcessedTokens} = process_tree(InsertTokens, [], Context),
@@ -144,12 +147,12 @@ process_inclusion(FileName, Line, Context) ->
                     Dict1 = dict:store('FILE', [{string, 1, FileName}], Context#ale_context.macro_dict),
                     TokenAcc = lists:reverse(file_attribute_tokens(FileName, 1)),
                     {Dict2, IncludedTokens} = process_tree(ParseTreeNoEOF, TokenAcc, 
-                        Context#ale_context{ 
-                            macro_dict = Dict1, 
+                        Context#ale_context{
+                            macro_dict = Dict1,
                             include_trail = [FileName|Context#ale_context.include_trail]}),
                     case ThisFile of
                         undefined -> {Dict2, IncludedTokens};
-                        [{string, _Loc, ThisFileName}] -> 
+                        [{string, _Loc, ThisFileName}] ->
                             {dict:store('FILE', ThisFile, Dict2),
                                 lists:reverse(file_attribute_tokens(ThisFileName, Line)) ++ IncludedTokens}
                     end;
@@ -281,21 +284,54 @@ mark_keywords(Tokens) ->
 
 mark_keywords([], Module, Acc) ->
     {lists:reverse(Acc), Module};
-mark_keywords([{'-', {DashLine, 1}} = Dash, {atom, {DashLine, 2}, 'module'} = Token,
-        {'(', {DashLine, _}} = Paren, {atom, {DashLine, _}, ModuleName} = ModToken|Rest], _, Acc) ->
-    mark_keywords(Rest, ModuleName, [ModToken, Paren, Token, Dash|Acc]);
-mark_keywords([{'-', {DashLine, 1}} = Dash, {atom, {DashLine, 2} = AtomLoc, Atom} = Token|Rest], Mod, Acc) ->
-    MarkedToken = case Atom of
-        'define' -> {define_keyword, AtomLoc};
-        'ifdef' -> {ifdef_keyword, AtomLoc};
-        'ifndef' -> {ifndef_keyword, AtomLoc};
-        'else' -> {else_keyword, AtomLoc};
-        'endif' -> {endif_keyword, AtomLoc};
-        'undef' -> {undef_keyword, AtomLoc};
-        'include' -> {include_keyword, AtomLoc};
-        'include_lib' -> {include_lib_keyword, AtomLoc};
-        _ -> Token
-    end,
-    mark_keywords(Rest, Mod, [MarkedToken, Dash|Acc]);
+mark_keywords([{'-', DashAttrs} = Dash,
+               {atom, ModuleAttrs, 'module'} = Token,
+               {'(', ParenAttrs} = Paren,
+               {atom, ModNameAttrs, ModuleName} = ModToken|Rest],
+              undefined,
+              Acc) ->
+    DashLoc = location(DashAttrs),
+    ModuleLoc = location(ModuleAttrs),
+    ParenLoc = location(ParenAttrs),
+    ModNameLoc = location(ModNameAttrs),
+    case {DashLoc, ModuleLoc, ParenLoc, ModNameLoc} of
+        {{DashLine, 1},
+         {DashLine, 2},
+         {DashLine, _},
+         {DashLine, _}} ->
+            mark_keywords(Rest, ModuleName, [ModToken, Paren, Token, Dash|Acc]);
+        _ ->
+            mark_keywords(Rest, undefined, [ModToken, Paren, Token, Dash|Acc])
+    end;
+mark_keywords([{'-', DashAttrs} = Dash,
+               {atom, AtomAttrs, Atom} = Token|Rest],
+              Mod,
+              Acc) ->
+    DashLoc = location(DashAttrs),
+    AtomLoc = location(AtomAttrs),
+    case {DashLoc, AtomLoc} of
+        {{DashLine, 1}, {DashLine, 2}} ->
+            MarkedToken = case Atom of
+                              'define' -> {define_keyword, AtomAttrs};
+                              'ifdef' -> {ifdef_keyword, AtomAttrs};
+                              'ifndef' -> {ifndef_keyword, AtomAttrs};
+                              'else' -> {else_keyword, AtomAttrs};
+                              'endif' -> {endif_keyword, AtomAttrs};
+                              'undef' -> {undef_keyword, AtomAttrs};
+                              'include' -> {include_keyword, AtomAttrs};
+                              'include_lib' -> {include_lib_keyword, AtomAttrs};
+                              _ -> Token
+                          end,
+            mark_keywords(Rest, Mod, [MarkedToken, Dash|Acc]);
+        _ ->
+            mark_keywords(Rest, Mod, [Token |Acc])
+    end;
 mark_keywords([Other|Rest], Mod, Acc) ->
     mark_keywords(Rest, Mod, [Other|Acc]).
+
+location(Location = {_Line, _Column}) ->
+    Location;
+location(Attrs) when is_list(Attrs) ->
+    Line = proplists:get_value(line, Attrs),
+    Column = proplists:get_value(column, Attrs),
+    {Line, Column}.
