@@ -50,7 +50,7 @@ Terminals
     '==' '/=' '=<' '<' '>=' '>' '=:=' '=/=' '<='
     '<<' '>>'
     '!' '=' '::' '..' '...'
-    dot.
+    comment dot.
 
 Rootsymbol File.
 
@@ -204,3 +204,4 @@ ExpressionToken -> '=' : '$1'.
 ExpressionToken -> '::' : '$1'.
 ExpressionToken -> '..' : '$1'.
 ExpressionToken -> '...' : '$1'.
+ExpressionToken -> comment : '$1'.
