@@ -40,7 +40,7 @@ Terminals
 
     char integer float atom string var
     '(' ')' ',' '-'
-    '->' ':-' '{' '}' '[' ']' '|' '||' '<-' ';' ':' '#' '.'
+    '->' ':-' '{' '}' '[' ']' '|' '||' '<-' ';' ':' '#' '.' ':=' '=>'
     'after' 'begin' 'case' 'try' 'catch' 'end' 'fun' 'if' 'of' 'receive' 'when'
     'andalso' 'orelse' 'query' 'spec'
     'bnot' 'not'
@@ -153,6 +153,8 @@ ExpressionToken -> ';' : '$1'.
 ExpressionToken -> ':' : '$1'.
 ExpressionToken -> '#' : '$1'.
 ExpressionToken -> '.' : '$1'.
+ExpressionToken -> ':=' : '$1'.
+ExpressionToken -> '=>' : '$1'.
 ExpressionToken -> 'after' : '$1'.
 ExpressionToken -> 'begin' : '$1'.
 ExpressionToken -> 'case' : '$1'.
