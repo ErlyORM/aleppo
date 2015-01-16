@@ -7,6 +7,7 @@ otp_release:
    - R16B01
 
 script:
+  - make
   - mkdir plt
   - ./travis-dialyzer.sh
 notifications:
