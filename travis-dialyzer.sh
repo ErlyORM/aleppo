@@ -4,7 +4,7 @@ PLT=plt/aleppo-$RANDOM.plt
 echo "PLT File $PLT"
 export PATH=$PATH:/usr/local/bin:/usr/bin
 echo "Building PLT, may take a few minutes"
-dialyzer  --build_plt --apps erts\
+dialyzer  --build_plt --apps stdlib\
        --output_plt $PLT > /dev/null
 
 echo "********************************************************************************"
