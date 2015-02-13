@@ -8,13 +8,12 @@ dialyzer  --build_plt --apps kernel stdlib\
        --output_plt $PLT > /dev/null
 
 echo "********************************************************************************"
-for app in  compiler 
+for app in  erts 
 do 
-    echo $app
+    echo $"Adding $app"
     dialyzer --add_to_plt --apps $app\
        --plt $PLT > /dev/null
 done
-rm -f deps/riak_*/ebin/*_pb.beam
 
 echo "********************************************************************************"
 for app in $(ls deps/)
