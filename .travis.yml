@@ -11,4 +11,4 @@ script:
   - mkdir plt
   - ./travis-dialyzer.sh
 notifications:
-  email: false 
+  email: false
