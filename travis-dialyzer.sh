@@ -4,7 +4,7 @@ PLT=plt/aleppo-$RANDOM.plt
 echo "PLT File $PLT"
 export PATH=$PATH:/usr/local/bin:/usr/bin
 echo "Building PLT, may take a few minutes"
-dialyzer  --build_plt --apps kernel stdlib\
+dialyzer  --build_plt --apps erts\
        --output_plt $PLT > /dev/null
 
 echo "********************************************************************************"
@@ -25,12 +25,13 @@ done
 echo "********************************************************************************"
 echo ""
 
-dialyzer	ebin/		\
+dialyzer	ebin/			\
     -Werror_handling		\
-    -Wno_undefined_callbacks	\
     -Wrace_conditions		\
-    --statistics -n             \
-    --fullpath			\
-    -n                          \
-    --plt $PLT #  -Wunmatched_returns
+    -Wunderspecs			\
+    -Wunmatched_returns	\
+    --verbose				\
+    --fullpath				\
+    -n						\
+    --plt $PLT
 #
