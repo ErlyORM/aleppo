@@ -1,6 +1,6 @@
 % Aleppo: ALternative Erlang Pre-ProcessOr
 -module(aleppo).
--export([process_file/1, process_tokens/1, process_tokens/2, scan_file/1]).
+-export([process_file/1, process_file/2, process_tokens/1, process_tokens/2, scan_file/1]).
 
 -record(ale_context, {
         include_trail = [],
@@ -9,10 +9,13 @@
     }).
 
 process_file(FileName) ->
+    process_file(FileName, []).
+
+process_file(FileName, Options) ->
     ModuleName = list_to_atom(filename:rootname(filename:basename(FileName))),
     case scan_file(FileName) of
         {ok, Tokens} ->
-            process_tokens(Tokens, [{file, FileName}, {module, ModuleName}]);
+            process_tokens(Tokens, [{file, FileName}, {module, ModuleName}|Options]);
         Error ->
             Error
     end.
@@ -23,6 +26,7 @@ process_tokens(Tokens) ->
 % Valid options:
 % - file: The path of the file being processed
 % - include: A list of directories to include in the .hrl search path
+% - return_macros: return the macro dict in result if successful
 process_tokens(Tokens, Options) ->
     {Tokens1, Module} = mark_keywords(Tokens),
     case aleppo_parser:parse(Tokens1) of
@@ -63,8 +67,12 @@ process_tree(ParseTree, Options) ->
         macro_dict = Dict2 },
 
     try process_tree(ParseTree, TokenAcc, Context) of
-        {_MacroDict, RevTokens} when is_list(RevTokens) ->
-            {ok, lists:reverse(RevTokens)}
+        {MacroDict, RevTokens} when is_list(RevTokens) ->
+            FinalTokens = lists:reverse(RevTokens),
+            case proplists:get_value(return_macros, Options, false) of
+                true -> {ok, FinalTokens, MacroDict};
+                _ -> {ok, FinalTokens}
+            end
     catch
         _:Reason ->
             {error, Reason}
