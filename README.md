@@ -1,7 +1,7 @@
 Aleppo: ALternative Erlang Pre-ProcessOr
 ========================================
 
-[![Build Status](https://travis-ci.org/ChicagoBoss/aleppo.svg)](https://travis-ci.org/ChicagoBoss/aleppo)
+[![Build Status](https://travis-ci.org/ErlyORM/aleppo.svg?branch=master)](https://travis-ci.org/ErlyORM/aleppo)
 
 Aleppo is an alternative to `epp(3erl)`, and is mainly intended for Erlang compiler hackers. The problem with EPP is that it only operates on Erlang source files. Aleppo will operate directly on tokens returned by erl_scan.
 
