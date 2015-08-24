@@ -347,10 +347,10 @@ stringify_tokens(TokenList) ->
 stringify_tokens1([], Acc) ->
     lists:concat(lists:reverse(Acc));
 stringify_tokens1([Token|Rest], []) ->
-    {symbol, Symbol} = erl_scan:token_info(Token, symbol),
+    Symbol = get_symbol(Token),
     stringify_tokens1(Rest, [Symbol]);
 stringify_tokens1([Token|Rest], Acc) ->
-    {symbol, Symbol} = erl_scan:token_info(Token, symbol),
+    Symbol = get_symbol(Token),
     stringify_tokens1(Rest, [Symbol, " "|Acc]).
 
 insert_comma_tokens(Args, Loc) ->
@@ -417,6 +417,10 @@ location(Attrs) ->
 -ifdef(pre18).
 location_helper(Attrs) ->
     legacy_location(Attrs).
+
+get_symbol(Token) ->
+    {symbol, Symbol} = erl_scan:token_info(Token, symbol),
+    Symbol.
 -else.
 location_helper(Attrs) ->
     case erl_anno:is_anno(Attrs) of
@@ -425,6 +429,9 @@ location_helper(Attrs) ->
         false ->
             legacy_location(Attrs)
     end.
+
+get_symbol(Token) ->
+    erl_scan:symbol(Token).
 -endif.
 
 legacy_location(Attrs) when is_list(Attrs) ->
