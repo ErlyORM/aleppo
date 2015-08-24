@@ -411,7 +411,23 @@ mark_keywords([Other|Rest], Mod, Acc) ->
 
 location(Location = {_Line, _Column}) ->
     Location;
-location(Attrs) when is_list(Attrs) ->
+location(Attrs) ->
+    location_helper(Attrs).
+
+-ifdef(pre18).
+location_helper(Attrs) ->
+    legacy_location(Attrs).
+-else.
+location_helper(Attrs) ->
+    case erl_anno:is_anno(Attrs) of
+        true ->
+            erl_anno:location(Attrs);
+        false ->
+            legacy_location(Attrs)
+    end.
+-endif.
+
+legacy_location(Attrs) when is_list(Attrs) ->
     Line = proplists:get_value(line, Attrs),
     Column = proplists:get_value(column, Attrs),
     {Line, Column}.
