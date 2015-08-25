@@ -68,7 +68,7 @@ process_tree(ParseTree, Options) ->
 
     try process_tree(ParseTree, TokenAcc, Context) of
         {MacroDict, RevTokens} when is_list(RevTokens) ->
-            FinalTokens = lists:reverse(RevTokens),
+            FinalTokens = reverse_and_normalize_token_locations(RevTokens),
             case proplists:get_value(return_macros, Options, false) of
                 true -> {ok, FinalTokens, MacroDict};
                 _ -> {ok, FinalTokens}
@@ -438,3 +438,17 @@ legacy_location(Attrs) when is_list(Attrs) ->
     Line = proplists:get_value(line, Attrs),
     Column = proplists:get_value(column, Attrs),
     {Line, Column}.
+
+reverse_and_normalize_token_locations(RevTokens) ->
+    reverse_and_normalize_token_locations_helper(RevTokens, []).
+
+reverse_and_normalize_token_locations_helper([], Acc) ->
+    Acc;
+reverse_and_normalize_token_locations_helper([{Type, MaybeLocation} | Rest], Acc) when is_tuple(MaybeLocation) orelse
+                                                                                       is_list(MaybeLocation) ->
+    reverse_and_normalize_token_locations_helper(Rest, [{Type, location(MaybeLocation)}|Acc]);
+reverse_and_normalize_token_locations_helper([{Type, MaybeLocation, Extra} | Rest], Acc) when is_tuple(MaybeLocation) orelse
+                                                                                              is_list(MaybeLocation) ->
+    reverse_and_normalize_token_locations_helper(Rest, [{Type, location(MaybeLocation), Extra}|Acc]);
+reverse_and_normalize_token_locations_helper([Other | Rest], Acc) ->
+    reverse_and_normalize_token_locations_helper(Rest, [Other | Acc]).
