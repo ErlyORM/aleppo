@@ -346,10 +346,10 @@ stringify_tokens(TokenList) ->
 stringify_tokens1([], Acc) ->
     lists:concat(lists:reverse(Acc));
 stringify_tokens1([Token|Rest], []) ->
-    Symbol = erl_scan:symbol(Token),
+    Symbol = symbol(Token),
     stringify_tokens1(Rest, [Symbol]);
 stringify_tokens1([Token|Rest], Acc) ->
-    Symbol = erl_scan:symbol(Token),
+    Symbol = symbol(Token),
     stringify_tokens1(Rest, [Symbol, " "|Acc]).
 
 insert_comma_tokens(Args, Loc) ->
@@ -416,4 +416,13 @@ location(Attrs) when is_list(Attrs) ->
     case {Line, Column} of
         {undefined, undefined} -> proplists:get_value(location, Attrs);
         Loc -> Loc
+    end.
+
+symbol(Token) ->
+    case erlang:function_exported(erl_syntax, symbol, 1) of
+        true ->
+            erl_scan:symbol(Token);
+        false ->
+            {symbol, Symbol} = erl_scan:token_info(Token, symbol),
+            Symbol
     end.
