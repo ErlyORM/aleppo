@@ -346,17 +346,17 @@ stringify_tokens(TokenList) ->
 stringify_tokens1([], Acc) ->
     lists:concat(lists:reverse(Acc));
 stringify_tokens1([Token|Rest], []) ->
-    {symbol, Symbol} = erl_scan:token_info(Token, symbol),
+    Symbol = erl_scan:symbol(Token),
     stringify_tokens1(Rest, [Symbol]);
 stringify_tokens1([Token|Rest], Acc) ->
-    {symbol, Symbol} = erl_scan:token_info(Token, symbol),
+    Symbol = erl_scan:symbol(Token),
     stringify_tokens1(Rest, [Symbol, " "|Acc]).
 
 insert_comma_tokens(Args, Loc) ->
     lists:foldr(fun
-            (Arg, []) -> Arg;
-            (Arg, Acc) -> Arg ++ [{',', Loc}|Acc]
-        end, [], Args).
+                    (Arg, []) -> Arg;
+                    (Arg, Acc) -> Arg ++ [{',', Loc}|Acc]
+                end, [], Args).
 
 mark_keywords(Tokens) ->
     mark_keywords(Tokens, undefined, []).
@@ -411,6 +411,9 @@ mark_keywords([Other|Rest], Mod, Acc) ->
 location(Location = {_Line, _Column}) ->
     Location;
 location(Attrs) when is_list(Attrs) ->
-    Line = proplists:get_value(line, Attrs),
-    Column = proplists:get_value(column, Attrs),
-    {Line, Column}.
+    Line = proplists:get_value(line, Attrs, undefined),
+    Column = proplists:get_value(column, Attrs, undefined),
+    case {Line, Column} of
+        {undefined, undefined} -> proplists:get_value(location, Attrs);
+        Loc -> Loc
+    end.
