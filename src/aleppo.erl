@@ -419,7 +419,7 @@ location(Attrs) when is_list(Attrs) ->
     end.
 
 symbol(Token) ->
-    case erlang:function_exported(erl_syntax, symbol, 1) of
+    case erlang:function_exported(erl_scan, symbol, 1) of
         true ->
             erl_scan:symbol(Token);
         false ->
