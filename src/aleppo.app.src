@@ -1,7 +1,7 @@
 %% -*- mode: erlang -*-
 {application, aleppo,
  [{description, "Aleppo: ALternative Erlang Pre-ProcessOr"},
-  {vsn, "0.1.0"},
+  {vsn, "0.9.4"},
   {modules, [
             ]},
   {applications, [kernel, stdlib]},
