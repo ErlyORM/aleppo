@@ -5,5 +5,10 @@
   {modules, [
             ]},
   {applications, [kernel, stdlib]},
-  {registered, []}
+  {registered, []},
+  {pkg_name, inaka_aleppo},
+  {maintainers, ["Inaka"]},
+  {licenses, []},
+  {links, [{"Github", "https://github.com/inaka/aleppo"}]},
+  {build_tools, ["make"]}
  ]}.
