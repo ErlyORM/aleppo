@@ -404,7 +404,7 @@ mark_keywords([{'-', DashAttrs} = Dash,
                           end,
             mark_keywords(Rest, Mod, [MarkedToken, Dash|Acc]);
         _ ->
-            mark_keywords(Rest, Mod, [Token |Acc])
+            mark_keywords(Rest, Mod, [Token, Dash|Acc])
     end;
 mark_keywords([Other|Rest], Mod, Acc) ->
     mark_keywords(Rest, Mod, [Other|Acc]).
