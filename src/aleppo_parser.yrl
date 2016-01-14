@@ -39,20 +39,24 @@ Terminals
     '?'
 
     char integer float atom string var
-    '(' ')' ',' '-'
-    '->' ':-' '{' '}' '[' ']' '|' '||' '<-' ';' ':' '#' '.' ':=' '=>'
+
+    '(' ')' ',' '->' '{' '}' '[' ']' '|' '||' '<-' ';' ':' '#' '.'
     'after' 'begin' 'case' 'try' 'catch' 'end' 'fun' 'if' 'of' 'receive' 'when'
-    'andalso' 'orelse' 'query' 'spec'
+    'andalso' 'orelse'
     'bnot' 'not'
     '*' '/' 'div' 'rem' 'band' 'and'
-    '+' 'bor' 'bxor' 'bsl' 'bsr' 'or' 'xor'
+    '+' '-' 'bor' 'bxor' 'bsl' 'bsr' 'or' 'xor'
     '++' '--'
-    '==' '/=' '=<' '<' '>=' '>' '=:=' '=/=' '<='
+    '==' '/=' '=<' '<' '>=' '>' '=:=' '=/=' '<=' '=>' ':='
     '<<' '>>'
     '!' '=' '::' '..' '...'
-    comment dot.
+    'spec' 'callback' % helper
+    comment
+    dot.
 
 Rootsymbol File.
+
+Unary 200 '('.
 
 File -> Elements eof : '$1' ++ ['$2'].
 File -> Elements : '$1' ++ [{eof, 0}].
@@ -145,7 +149,6 @@ ExpressionToken -> atom : '$1'.
 ExpressionToken -> string : '$1'.
 ExpressionToken -> var : '$1'.
 ExpressionToken -> '->' : '$1'.
-ExpressionToken -> ':-' : '$1'.
 ExpressionToken -> '|' : '$1'.
 ExpressionToken -> '||' : '$1'.
 ExpressionToken -> '<-' : '$1'.
@@ -168,8 +171,8 @@ ExpressionToken -> 'receive' : '$1'.
 ExpressionToken -> 'when' : '$1'.
 ExpressionToken -> 'andalso' : '$1'.
 ExpressionToken -> 'orelse' : '$1'.
-ExpressionToken -> 'query' : '$1'.
 ExpressionToken -> 'spec' : '$1'.
+ExpressionToken -> 'callback' : '$1'.
 ExpressionToken -> 'bnot' : '$1'.
 ExpressionToken -> 'not' : '$1'.
 ExpressionToken -> '*' : '$1'.
