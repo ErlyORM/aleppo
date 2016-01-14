@@ -1,6 +1,7 @@
 % Aleppo: ALternative Erlang Pre-ProcessOr
 -module(aleppo).
--export([process_file/1, process_tokens/1, process_tokens/2, scan_file/1]).
+-export([process_file/1, process_file/2, process_tokens/1, process_tokens/2,
+         scan_file/1]).
 
 -record(ale_context, {
         include_trail = [],
@@ -9,10 +10,14 @@
     }).
 
 process_file(FileName) ->
+    process_file(FileName, []).
+
+process_file(FileName, Options) ->
     ModuleName = list_to_atom(filename:rootname(filename:basename(FileName))),
     case scan_file(FileName) of
         {ok, Tokens} ->
-            process_tokens(Tokens, [{file, FileName}, {module, ModuleName}]);
+            process_tokens(
+                Tokens, [{file, FileName}, {module, ModuleName}|Options]);
         Error ->
             Error
     end.
@@ -23,6 +28,7 @@ process_tokens(Tokens) ->
 % Valid options:
 % - file: The path of the file being processed
 % - include: A list of directories to include in the .hrl search path
+% - return_macros: return the macro dict in result if successful
 process_tokens(Tokens, Options) ->
     {Tokens1, Module} = mark_keywords(Tokens),
     case aleppo_parser:parse(Tokens1) of
@@ -63,8 +69,12 @@ process_tree(ParseTree, Options) ->
         macro_dict = Dict2 },
 
     try process_tree(ParseTree, TokenAcc, Context) of
-        {_MacroDict, RevTokens} when is_list(RevTokens) ->
-            {ok, lists:reverse(RevTokens)}
+        {MacroDict, RevTokens} when is_list(RevTokens) ->
+            FinalTokens = reverse_and_normalize_token_locations(RevTokens),
+            case proplists:get_value(return_macros, Options, false) of
+                true -> {ok, FinalTokens, MacroDict};
+                _ -> {ok, FinalTokens}
+            end
     catch
         _:Reason ->
             {error, Reason}
@@ -346,17 +356,17 @@ stringify_tokens(TokenList) ->
 stringify_tokens1([], Acc) ->
     lists:concat(lists:reverse(Acc));
 stringify_tokens1([Token|Rest], []) ->
-    Symbol = symbol(Token),
+    Symbol = get_symbol(Token),
     stringify_tokens1(Rest, [Symbol]);
 stringify_tokens1([Token|Rest], Acc) ->
-    Symbol = symbol(Token),
+    Symbol = get_symbol(Token),
     stringify_tokens1(Rest, [Symbol, " "|Acc]).
 
 insert_comma_tokens(Args, Loc) ->
     lists:foldr(fun
-                    (Arg, []) -> Arg;
-                    (Arg, Acc) -> Arg ++ [{',', Loc}|Acc]
-                end, [], Args).
+            (Arg, []) -> Arg;
+            (Arg, Acc) -> Arg ++ [{',', Loc}|Acc]
+        end, [], Args).
 
 mark_keywords(Tokens) ->
     mark_keywords(Tokens, undefined, []).
@@ -403,26 +413,55 @@ mark_keywords([{'-', DashAttrs} = Dash,
                           end,
             mark_keywords(Rest, Mod, [MarkedToken, Dash|Acc]);
         _ ->
-            mark_keywords(Rest, Mod, [Token |Acc])
+            mark_keywords(Rest, Mod, [Token, Dash|Acc])
     end;
 mark_keywords([Other|Rest], Mod, Acc) ->
     mark_keywords(Rest, Mod, [Other|Acc]).
 
 location(Location = {_Line, _Column}) ->
     Location;
-location(Attrs) when is_list(Attrs) ->
-    Line = proplists:get_value(line, Attrs, undefined),
-    Column = proplists:get_value(column, Attrs, undefined),
-    case {Line, Column} of
-        {undefined, undefined} -> proplists:get_value(location, Attrs);
-        Loc -> Loc
+location(Attrs) ->
+    location_helper(Attrs).
+
+-ifdef(pre18).
+location_helper(Attrs) ->
+    legacy_location(Attrs).
+
+get_symbol(Token) ->
+    {symbol, Symbol} = erl_scan:token_info(Token, symbol),
+    Symbol.
+-else.
+location_helper(Attrs) ->
+    case erl_anno:is_anno(Attrs) of
+        true ->
+            erl_anno:location(Attrs);
+        false ->
+            legacy_location(Attrs)
     end.
 
-symbol(Token) ->
-    case erlang:function_exported(erl_scan, symbol, 1) of
-        true ->
-            erl_scan:symbol(Token);
-        false ->
-            {symbol, Symbol} = erl_scan:token_info(Token, symbol),
-            Symbol
-    end.
+get_symbol(Token) ->
+    erl_scan:symbol(Token).
+-endif.
+
+legacy_location(Attrs) when is_list(Attrs) ->
+    Line = proplists:get_value(line, Attrs),
+    Column = proplists:get_value(column, Attrs),
+    {Line, Column}.
+
+reverse_and_normalize_token_locations(RevTokens) ->
+    reverse_and_normalize_token_locations_helper(RevTokens, []).
+
+reverse_and_normalize_token_locations_helper([], Acc) ->
+    Acc;
+reverse_and_normalize_token_locations_helper(
+    [{Type, MaybeLocation} | Rest], Acc)
+        when is_tuple(MaybeLocation) orelse is_list(MaybeLocation) ->
+    reverse_and_normalize_token_locations_helper(
+        Rest, [{Type, location(MaybeLocation)}|Acc]);
+reverse_and_normalize_token_locations_helper(
+    [{Type, MaybeLocation, Extra} | Rest], Acc)
+        when is_tuple(MaybeLocation) orelse is_list(MaybeLocation) ->
+    reverse_and_normalize_token_locations_helper(
+        Rest, [{Type, location(MaybeLocation), Extra}|Acc]);
+reverse_and_normalize_token_locations_helper([Other | Rest], Acc) ->
+    reverse_and_normalize_token_locations_helper(Rest, [Other | Acc]).
