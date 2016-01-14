@@ -7,8 +7,8 @@
   {applications, [kernel, stdlib]},
   {registered, []},
   {pkg_name, inaka_aleppo},
-  {maintainers, ["Inaka"]},
+  {maintainers, ["Inaka", "ErlyORM"]},
   {licenses, []},
   {links, [{"Github", "https://github.com/inaka/aleppo"}]},
-  {build_tools, ["make"]}
+  {build_tools, ["make", "rebar"]}
  ]}.
