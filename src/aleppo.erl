@@ -448,6 +448,11 @@ legacy_location(Attrs) when is_list(Attrs) ->
     Column = proplists:get_value(column, Attrs),
     {Line, Column}.
 
+attrs_normalized_location(Attrs, Location) ->
+    Attrs1 = proplists:delete(line, Attrs),
+    Attrs2 = proplists:delete(column, Attrs1),
+    [{location, Location} | Attrs2].
+
 reverse_and_normalize_token_locations(RevTokens) ->
     reverse_and_normalize_token_locations_helper(RevTokens, []).
 
@@ -455,13 +460,27 @@ reverse_and_normalize_token_locations_helper([], Acc) ->
     Acc;
 reverse_and_normalize_token_locations_helper(
     [{Type, MaybeLocation} | Rest], Acc)
-        when is_tuple(MaybeLocation) orelse is_list(MaybeLocation) ->
+        when is_tuple(MaybeLocation) ->
     reverse_and_normalize_token_locations_helper(
         Rest, [{Type, location(MaybeLocation)}|Acc]);
 reverse_and_normalize_token_locations_helper(
+    [{Type, Attrs} | Rest], Acc)
+        when is_list(Attrs) ->
+    Location = location(Attrs),
+    Attrs1 = attrs_normalized_location(Attrs, Location),
+    reverse_and_normalize_token_locations_helper(
+        Rest, [{Type, Attrs1} | Acc]);
+reverse_and_normalize_token_locations_helper(
     [{Type, MaybeLocation, Extra} | Rest], Acc)
-        when is_tuple(MaybeLocation) orelse is_list(MaybeLocation) ->
+        when is_tuple(MaybeLocation) ->
     reverse_and_normalize_token_locations_helper(
         Rest, [{Type, location(MaybeLocation), Extra}|Acc]);
+reverse_and_normalize_token_locations_helper(
+    [{Type, Attrs, Extra} | Rest], Acc)
+        when is_list(Attrs) ->
+    Location = location(Attrs),
+    Attrs1 = attrs_normalized_location(Attrs, Location),
+    reverse_and_normalize_token_locations_helper(
+        Rest, [{Type, Attrs1, Extra}|Acc]);
 reverse_and_normalize_token_locations_helper([Other | Rest], Acc) ->
     reverse_and_normalize_token_locations_helper(Rest, [Other | Acc]).
