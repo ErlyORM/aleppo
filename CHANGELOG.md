@@ -1,5 +1,30 @@
 # Change Log
 
+## [0.9.7](https://github.com/inaka/aleppo/tree/0.9.7) (2016-01-21)
+
+[Full Changelog](https://github.com/inaka/aleppo/compare/0.9.6...0.9.7)
+
+**Closed issues:**
+
+- The hex.pm packages include the aleppo\_parser.erl file which shouldn't be included [\#20](https://github.com/inaka/aleppo/issues/20)
+- Version Bump to 0.9.5 [\#16](https://github.com/inaka/aleppo/issues/16)
+- Do aleppo rebar compatible [\#10](https://github.com/inaka/aleppo/issues/10)
+
+**Merged pull requests:**
+
+- \[\#20\] Remove generated parser.erl file from package [\#21](https://github.com/inaka/aleppo/pull/21) ([jfacorro](https://github.com/jfacorro))
+
+## [0.9.6](https://github.com/inaka/aleppo/tree/0.9.6) (2016-01-14)
+[Full Changelog](https://github.com/inaka/aleppo/compare/0.9.5...0.9.6)
+
+**Closed issues:**
+
+- Switch build tools to erlang.mk and republish to hex.pm [\#18](https://github.com/inaka/aleppo/issues/18)
+
+**Merged pull requests:**
+
+- \[Fix \#18\] Get it ready for republishing on hex.pm [\#19](https://github.com/inaka/aleppo/pull/19) ([elbrujohalcon](https://github.com/elbrujohalcon))
+
 ## [0.9.5](https://github.com/inaka/aleppo/tree/0.9.5) (2015-12-31)
 [Full Changelog](https://github.com/inaka/aleppo/compare/0.9.4...0.9.5)
 
