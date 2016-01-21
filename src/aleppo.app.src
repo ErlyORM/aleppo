@@ -1,9 +1,22 @@
 %% -*- mode: erlang -*-
 {application, aleppo,
  [{description, "Aleppo: ALternative Erlang Pre-ProcessOr"},
-  {vsn, "0.9"},
+  {vsn, "0.9.7"},
   {modules, [
             ]},
   {applications, [kernel, stdlib]},
-  {registered, []}
+  {registered, []},
+  {pkg_name, inaka_aleppo},
+  {maintainers, ["Inaka", "ErlyORM"]},
+  {licenses, []},
+  {links, [{"Github", "https://github.com/inaka/aleppo"}]},
+  {build_tools, ["make", "rebar"]},
+  {files, [ "Makefile"
+          , "rebar"
+          , "rebar.config"
+          , "src/aleppo.app.src"
+          , "src/aleppo.erl"
+          , "src/aleppo_parser.yrl"
+          ]
+  }
  ]}.

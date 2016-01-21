@@ -4,7 +4,7 @@ REBAR_VER = 2.6.1
 
 ## dialyzer
 PLT_FILE = ~/aleppo.plt
-PLT_APPS ?= kernel stdlib erts
+PLT_APPS ?= kernel stdlib erts compiler crypto
 DIALYZER_OPTS ?= -Werror_handling -Wrace_conditions -Wunmatched_returns \
 		-Wunderspecs --verbose --fullpath -n
 
