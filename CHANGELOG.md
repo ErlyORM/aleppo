@@ -1,7 +1,19 @@
 # Change Log
 
-## [0.9.7](https://github.com/inaka/aleppo/tree/0.9.7) (2016-01-21)
+## [0.9.8](https://github.com/inaka/aleppo/tree/0.9.8) (2016-01-21)
 
+[Full Changelog](https://github.com/inaka/aleppo/compare/0.9.7...0.9.8)
+
+**Closed issues:**
+
+- Create  0.9.7 release  [\#23](https://github.com/inaka/aleppo/issues/23)
+- Keep attributes other than location when normalizing them [\#22](https://github.com/inaka/aleppo/issues/22)
+
+**Merged pull requests:**
+
+- \[Close \#22\] Keep other attributes when normalizing location [\#25](https://github.com/inaka/aleppo/pull/25) ([jfacorro](https://github.com/jfacorro))
+
+## [0.9.7](https://github.com/inaka/aleppo/tree/0.9.7) (2016-01-21)
 [Full Changelog](https://github.com/inaka/aleppo/compare/0.9.6...0.9.7)
 
 **Closed issues:**
@@ -12,6 +24,7 @@
 
 **Merged pull requests:**
 
+- \[\#23\] Release 0.9.7 [\#24](https://github.com/inaka/aleppo/pull/24) ([jfacorro](https://github.com/jfacorro))
 - \[\#20\] Remove generated parser.erl file from package [\#21](https://github.com/inaka/aleppo/pull/21) ([jfacorro](https://github.com/jfacorro))
 
 ## [0.9.6](https://github.com/inaka/aleppo/tree/0.9.6) (2016-01-14)
