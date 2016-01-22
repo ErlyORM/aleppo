@@ -1,16 +1,29 @@
 # Change Log
 
-## [0.9.8](https://github.com/inaka/aleppo/tree/0.9.8) (2016-01-21)
+## [0.9.9](https://github.com/inaka/aleppo/tree/0.9.9) (2016-01-22)
 
+[Full Changelog](https://github.com/inaka/aleppo/compare/0.9.8...0.9.9)
+
+**Closed issues:**
+
+- When aleppo:process\_tree/3 catches an exception the token added is not a valid Erlang token  [\#28](https://github.com/inaka/aleppo/issues/28)
+
+**Merged pull requests:**
+
+- \[Closes \#28\] Take the second element from custom token tuple [\#29](https://github.com/inaka/aleppo/pull/29) ([jfacorro](https://github.com/jfacorro))
+
+## [0.9.8](https://github.com/inaka/aleppo/tree/0.9.8) (2016-01-21)
 [Full Changelog](https://github.com/inaka/aleppo/compare/0.9.7...0.9.8)
 
 **Closed issues:**
 
+- Bump version to 0.9.8 [\#26](https://github.com/inaka/aleppo/issues/26)
 - Create  0.9.7 release  [\#23](https://github.com/inaka/aleppo/issues/23)
 - Keep attributes other than location when normalizing them [\#22](https://github.com/inaka/aleppo/issues/22)
 
 **Merged pull requests:**
 
+- \[Closes \#26\] Release 0.9.8 [\#27](https://github.com/inaka/aleppo/pull/27) ([jfacorro](https://github.com/jfacorro))
 - \[Close \#22\] Keep other attributes when normalizing location [\#25](https://github.com/inaka/aleppo/pull/25) ([jfacorro](https://github.com/jfacorro))
 
 ## [0.9.7](https://github.com/inaka/aleppo/tree/0.9.7) (2016-01-21)
