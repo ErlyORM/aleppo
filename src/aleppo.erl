@@ -190,7 +190,9 @@ process_tree([Node|Rest], TokenAcc, Context) ->
         end
     catch
         _:_ ->
-            process_tree(Rest, [Node|TokenAcc], Context)
+            %% Get the actual token by unboxing it from aleppo's custom token
+            ActualToken = erlang:element(2, Node),
+            process_tree(Rest, [ActualToken|TokenAcc], Context)
     end.
 
 process_ifelse(Rest, MacroName, IfBody, ElseBody, TokenAcc, Context) ->
