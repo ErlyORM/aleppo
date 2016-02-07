@@ -446,9 +446,14 @@ get_symbol(Token) ->
 -endif.
 
 legacy_location(Attrs) when is_list(Attrs) ->
-    Line = proplists:get_value(line, Attrs),
-    Column = proplists:get_value(column, Attrs),
-    {Line, Column}.
+    case proplists:get_value(location, Attrs) of
+        {_, _} = Loc ->
+            Loc;
+        undefined ->
+            Line = proplists:get_value(line, Attrs),
+            Column = proplists:get_value(column, Attrs),
+            {Line, Column}
+    end.
 
 attrs_normalized_location(Attrs, Location) ->
     Attrs1 = proplists:delete(line, Attrs),
