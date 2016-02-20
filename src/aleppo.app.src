@@ -1,9 +1,12 @@
 %% -*- mode: erlang -*-
 {application, aleppo,
  [{description, "Aleppo: ALternative Erlang Pre-ProcessOr"},
-  {vsn, "0.9"},
+  {vsn, "0.9.0"},
   {modules, [
             ]},
   {applications, [kernel, stdlib]},
-  {registered, []}
+  {registered, []},
+  {maintainers,["ErlyORM", "Heinz N. Gies"]},
+  {licenses,["Apache"]},
+  {links,[{"Github","https://github.com/ErlyORM/aleppo"}]}
  ]}.
