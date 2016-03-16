@@ -1,43 +1,18 @@
-REBAR=./rebar
-GIT = git
-REBAR_VER = 2.6.1
+PROJECT = aleppo
 
-## dialyzer
-PLT_FILE = ~/aleppo.plt
-PLT_APPS ?= kernel stdlib erts compiler crypto
-DIALYZER_OPTS ?= -Werror_handling -Wrace_conditions -Wunmatched_returns \
-		-Wunderspecs --verbose --fullpath -n
+TEST_DEPS = katana_test mixer
 
-all: compile
+dep_katana_test = git https://github.com/inaka/katana-test.git 0.0.3
+dep_mixer       = git https://github.com/inaka/mixer.git       0.1.5
 
-compile:
-	@$(REBAR) compile
+BUILD_DEPS = inaka_mk hexer_mk
+DEP_PLUGINS = inaka_mk hexer_mk
 
-run:
-	@$(REBAR) shell
+dep_inaka_mk    = git https://github.com/inaka/inaka.mk.git    1.0.0
+dep_hexer_mk    = git https://github.com/inaka/hexer.mk.git    1.1.0
 
-rebar_src:
-	@rm -rf $(PWD)/rebar_src
-	@$(GIT) clone git://github.com/rebar/rebar.git rebar_src
-	@$(GIT) -C rebar_src checkout tags/$(REBAR_VER)
-	@cd $(PWD)/rebar_src/; ./bootstrap
-	@cp $(PWD)/rebar_src/rebar $(PWD)
-	@rm -rf $(PWD)/rebar_src
+ERLC_OPTS := +warn_unused_vars +warn_export_all +warn_shadow_vars +warn_unused_import +warn_unused_function
+ERLC_OPTS += +warn_bif_clash +warn_unused_record +warn_deprecated_function +warn_obsolete_guard +strict_validation
+ERLC_OPTS += +warn_export_vars +warn_exported_vars +warn_missing_spec +warn_untyped_record +debug_info
 
-dialyze: all
-	@[ -f $(PLT_FILE) ] || $(MAKE) plt
-	@dialyzer --plt $(PLT_FILE) $(DIALYZER_OPTS) ebin || [ $$? -eq 2 ];
-
-## In case you are missing a plt file for dialyzer,
-## you can run/adapt this command
-plt:
-	@echo "Building PLT, may take a few minutes"
-	@dialyzer --build_plt --output_plt $(PLT_FILE) --apps \
-		$(PLT_APPS) || [ $$? -eq 2 ];
-
-clean:
-	@rm -fv erl_crash.dump
-	@rm -f $(PLT_FILE)
-	@$(REBAR) clean
-
-.PHONY: all compile run dialyze plt clean
+include erlang.mk

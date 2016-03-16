@@ -5,3 +5,8 @@ aleppo_parser.erl
 /.settings/
 /.project
 .rebar
+*.plt
+.erlang.mk/
+aleppo.d
+deps/
+logs/
