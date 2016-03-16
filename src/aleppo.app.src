@@ -6,11 +6,10 @@
             ]},
   {applications, [kernel, stdlib]},
   {registered, []},
-  {pkg_name, inaka_aleppo},
   {maintainers, ["Inaka", "ErlyORM"]},
   {licenses, []},
   {links, [{"Github", "https://github.com/inaka/aleppo"}]},
-  {build_tools, ["make", "rebar"]},
+  {build_tools, ["erlang.mk", "rebar"]},
   {files, [ "Makefile"
           , "rebar"
           , "rebar.config"
