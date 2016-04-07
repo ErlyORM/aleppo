@@ -2,7 +2,7 @@ PROJECT = aleppo
 
 TEST_DEPS = katana_test mixer
 
-dep_katana_test = git https://github.com/inaka/katana-test.git 0.0.3
+dep_katana_test = git https://github.com/inaka/katana-test.git 0.0.5
 dep_mixer       = git https://github.com/inaka/mixer.git       0.1.5
 
 BUILD_DEPS = inaka_mk hexer_mk

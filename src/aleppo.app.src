@@ -1,9 +1,8 @@
 %% -*- mode: erlang -*-
 {application, aleppo,
  [{description, "Aleppo: ALternative Erlang Pre-ProcessOr"},
-  {vsn, "0.9.9"},
-  {modules, [
-            ]},
+  {vsn, "0.9.10"},
+  {modules, []},
   {applications, [kernel, stdlib]},
   {registered, []},
   {maintainers, ["Inaka", "ErlyORM"]},

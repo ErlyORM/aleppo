@@ -1,15 +1,29 @@
 # Change Log
 
-## [0.9.9](https://github.com/inaka/aleppo/tree/0.9.9) (2016-01-22)
+## [0.9.10](https://github.com/inaka/aleppo/tree/0.9.10) (2016-04-07)
+[Full Changelog](https://github.com/inaka/aleppo/compare/0.9.9...0.9.10)
 
+**Closed issues:**
+
+- Update repo and make it ready for hex.pm [\#35](https://github.com/inaka/aleppo/issues/35)
+- Location is {undefined, undefined} for all nodes in 18.x  [\#32](https://github.com/inaka/aleppo/issues/32)
+
+**Merged pull requests:**
+
+- \[Fix \#35\] Add meta testing and Add erlang.mk [\#36](https://github.com/inaka/aleppo/pull/36) ([harenson](https://github.com/harenson))
+- \[Closes \#32\] Check for location attribute before getting line and column [\#33](https://github.com/inaka/aleppo/pull/33) ([jfacorro](https://github.com/jfacorro))
+
+## [0.9.9](https://github.com/inaka/aleppo/tree/0.9.9) (2016-01-22)
 [Full Changelog](https://github.com/inaka/aleppo/compare/0.9.8...0.9.9)
 
 **Closed issues:**
 
+- Bump version to 0.9.9 [\#30](https://github.com/inaka/aleppo/issues/30)
 - When aleppo:process\_tree/3 catches an exception the token added is not a valid Erlang token  [\#28](https://github.com/inaka/aleppo/issues/28)
 
 **Merged pull requests:**
 
+- \[Closes \#30\] Bump 0.9.9 [\#31](https://github.com/inaka/aleppo/pull/31) ([jfacorro](https://github.com/jfacorro))
 - \[Closes \#28\] Take the second element from custom token tuple [\#29](https://github.com/inaka/aleppo/pull/29) ([jfacorro](https://github.com/jfacorro))
 
 ## [0.9.8](https://github.com/inaka/aleppo/tree/0.9.8) (2016-01-21)
