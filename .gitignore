@@ -11,3 +11,5 @@ aleppo_parser.erl
 aleppo.d
 deps/
 logs/
+_build
+doc
