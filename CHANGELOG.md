@@ -1,5 +1,16 @@
 # Change Log
 
+## [1.0.0](https://github.com/inaka/aleppo/tree/1.0.0) (2016-06-13)
+[Full Changelog](https://github.com/inaka/aleppo/compare/0.9.10...1.0.0)
+
+**Closed issues:**
+
+- Move from erlang.mk to rebar3 [\#37](https://github.com/inaka/aleppo/issues/37)
+
+**Merged pull requests:**
+
+- \[Close \#37\] rebar3 as a build tool [\#38](https://github.com/inaka/aleppo/pull/38) ([Euen](https://github.com/Euen))
+
 ## [0.9.10](https://github.com/inaka/aleppo/tree/0.9.10) (2016-04-07)
 [Full Changelog](https://github.com/inaka/aleppo/compare/0.9.9...0.9.10)
 
@@ -11,6 +22,7 @@
 **Merged pull requests:**
 
 - \[Fix \#35\] Add meta testing and Add erlang.mk [\#36](https://github.com/inaka/aleppo/pull/36) ([harenson](https://github.com/harenson))
+- Bump version to 0.9.10 and publish in hex.pm [\#34](https://github.com/inaka/aleppo/pull/34) ([jfacorro](https://github.com/jfacorro))
 - \[Closes \#32\] Check for location attribute before getting line and column [\#33](https://github.com/inaka/aleppo/pull/33) ([jfacorro](https://github.com/jfacorro))
 
 ## [0.9.9](https://github.com/inaka/aleppo/tree/0.9.9) (2016-01-22)
