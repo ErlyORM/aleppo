@@ -8,7 +8,7 @@
   {maintainers, ["Inaka", "ErlyORM"]},
   {licenses, []},
   {links, [{"Github", "https://github.com/inaka/aleppo"}]},
-  {build_tools, ["erlang.mk", "rebar"]},
+  {build_tools, ["rebar3"]},
   {files, [ "Makefile"
           , "rebar"
           , "rebar.config"
