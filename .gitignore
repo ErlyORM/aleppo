@@ -1,5 +1,9 @@
-ebin
-aleppo_parser.erl
 /.settings/
 /.project
+/_build
+aleppo_parser.erl
+ebin
+rebar.lock
+/ebin
+/doc
 .rebar
