@@ -19,7 +19,7 @@ rebar_src:
 	@rm -rf $(PWD)/rebar_src
 
 dialyze:
-	@$(REBAR) dialyze
+	@$(REBAR) dialyzer
 
 clean:
 	@rm -fv erl_crash.dump
