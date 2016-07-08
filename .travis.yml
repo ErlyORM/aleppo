@@ -24,7 +24,6 @@ otp_release:
 
 script:
   - make
-  - make plt
   - make dialyze
 notifications:
   email: false
