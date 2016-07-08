@@ -4,7 +4,7 @@
   {vsn, "0.9.1"},
   {modules, []},
   {applications, [kernel, stdlib]},
-  {registered, []}
+  {registered, []},
   {maintainers,["ErlyORM"]},
   {licenses,["MIT/X11"]},
   {links,[{"Github","https://github.com/ErlyORM/aleppo"}]}
