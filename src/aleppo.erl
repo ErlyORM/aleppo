@@ -275,7 +275,9 @@ expand_filename([$$|FileNameMinusDollar] = FileName, Context) ->
 expand_filename(FileName, Context) ->
     expand_relative_filename(FileName, Context).
 
-expand_relative_filename(FileName, Context) ->
+expand_relative_filename(FileName, #ale_context{include_trail = IncTrail,
+                                                include_dirs = IncDirs}) ->
+    TrailDirs = [filename:dirname(Trail) || Trail <- IncTrail],
     ExpandedFileName = lists:foldl(
         fun
             (Dir, "") ->
@@ -286,7 +288,7 @@ expand_relative_filename(FileName, Context) ->
                 end;
             (_, F) ->
                 F
-        end, "", Context#ale_context.include_dirs),
+        end, "", IncDirs ++ TrailDirs),
     case ExpandedFileName of
         "" -> throw({error, {not_found, FileName}});
         ExpandedFileName ->
