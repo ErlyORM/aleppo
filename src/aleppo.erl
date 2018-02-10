@@ -1,4 +1,14 @@
-% Aleppo: ALternative Erlang Pre-ProcessOr
+%%-------------------------------------------------------------------
+%% @author
+%%     ChicagoBoss Team and contributors
+%% @end
+%% @copyright
+%%     This file is part of ChicagoBoss project.
+%%     for license information, see LICENSE file in root directory
+%% @end
+%% @doc Aleppo: ALternative Erlang Pre-ProcessOr
+%%-------------------------------------------------------------------
+
 -module(aleppo).
 -export([process_file/1, process_file/2, process_tokens/1, process_tokens/2, scan_file/1]).
 
