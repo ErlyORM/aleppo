@@ -2,6 +2,8 @@ language: erlang
 sudo: false
 otp_release:
 # Test on all supported releases
+   - 20.2
+   - 20.1
    - 20.0
    - 19.3
    - 19.2
@@ -12,19 +14,9 @@ otp_release:
    - 18.1
    - 18.0
    - 17.5
-   - 17.4
-   - 17.3
-   - 17.1
-   - 17.0
-   - R16B03-1
-   - R16B03
-   - R16B02
-   - R16B01
-   - R16B
-   - R15B03
-   - R15B02
-   - R15B01
-   - R15B
+
+before_script:
+  - kerl list installations
 
 script:
   - make
