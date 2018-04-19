@@ -349,6 +349,15 @@ replace_macro_strings1([{'macro_string', {var, Loc, VarName}}|Rest],
     replace_macro_strings1(Rest, MacroStringDict,
                            [{string, Loc, dict:fetch(VarName, MacroStringDict)}
                             |Acc]);
+replace_macro_strings1([Token|Rest], MacroStringDict, Acc)
+  when is_tuple(Token) ->
+    Result0 = replace_macro_strings1(tuple_to_list(Token), MacroStringDict, []),
+    Result1 = list_to_tuple(Result0),
+    replace_macro_strings1(Rest, MacroStringDict, [Result1|Acc]);
+replace_macro_strings1([Token|Rest], MacroStringDict, Acc)
+  when is_list(Token) ->
+    Result = replace_macro_strings1(Token, MacroStringDict, []),
+    replace_macro_strings1(Rest, MacroStringDict, [Result|Acc]);
 replace_macro_strings1([OtherToken|Rest], MacroStringDict, Acc) ->
     replace_macro_strings1(Rest, MacroStringDict, [OtherToken|Acc]).
 
