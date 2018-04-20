@@ -1,7 +1,7 @@
 %% -*- mode: erlang -*-
 {application, aleppo,
  [{description, "Aleppo: ALternative Erlang Pre-ProcessOr"},
-  {vsn, "1.0.0"},
+  {vsn, git},
   {modules, []},
   {pkg_name, inaka_aleppo},
   {applications, [kernel, stdlib]},
