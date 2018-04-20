@@ -1,5 +1,20 @@
 # Change Log
 
+## [1.0.1](https://github.com/inaka/aleppo/tree/1.0.1)
+
+[Full Changelog](https://github.com/inaka/aleppo/compare/1.0.0...1.0.1)
+
+**Closed issues:**
+
+- Macros calling other macros with the stringify operator \(??\) fail [\#47](https://github.com/inaka/aleppo/issues/47)
+- Version Bump to 1.0.0 [\#39](https://github.com/inaka/aleppo/issues/39)
+
+**Merged pull requests:**
+
+- \[Closes \#47\] Nested macro calls with stringify fail [\#48](https://github.com/inaka/aleppo/pull/48) ([jfacorro](https://github.com/jfacorro))
+- Add license, required to publish in hex.pm [\#42](https://github.com/inaka/aleppo/pull/42) ([Euen](https://github.com/Euen))
+- rename app name to inaka\_aleppo to be able to pubish in hex.pm [\#41](https://github.com/inaka/aleppo/pull/41) ([Euen](https://github.com/Euen))
+
 ## [1.0.0](https://github.com/inaka/aleppo/tree/1.0.0) (2016-06-13)
 [Full Changelog](https://github.com/inaka/aleppo/compare/0.9.10...1.0.0)
 
@@ -9,6 +24,7 @@
 
 **Merged pull requests:**
 
+- \[Close \#39\] version bump to 1.0.0 [\#40](https://github.com/inaka/aleppo/pull/40) ([Euen](https://github.com/Euen))
 - \[Close \#37\] rebar3 as a build tool [\#38](https://github.com/inaka/aleppo/pull/38) ([Euen](https://github.com/Euen))
 
 ## [0.9.10](https://github.com/inaka/aleppo/tree/0.9.10) (2016-04-07)
