@@ -1,4 +1,14 @@
-% Aleppo: ALternative Erlang Pre-ProcessOr
+%%-------------------------------------------------------------------
+%% @author
+%%     ChicagoBoss Team and contributors
+%% @end
+%% @copyright
+%%     This file is part of ChicagoBoss project.
+%%     for license information, see LICENSE file in root directory
+%% @end
+%% @doc Aleppo: ALternative Erlang Pre-ProcessOr
+%%-------------------------------------------------------------------
+
 -module(aleppo).
 -export([process_file/1, process_file/2, process_tokens/1, process_tokens/2,
          scan_file/1]).
@@ -286,7 +296,9 @@ expand_filename([$$|FileNameMinusDollar] = FileName, Context) ->
 expand_filename(FileName, Context) ->
     expand_relative_filename(FileName, Context).
 
-expand_relative_filename(FileName, Context) ->
+expand_relative_filename(FileName, #ale_context{include_trail = IncTrail,
+                                                include_dirs = IncDirs}) ->
+    TrailDirs = [filename:dirname(Trail) || Trail <- IncTrail],
     ExpandedFileName = lists:foldl(
         fun
             (Dir, "") ->
@@ -297,7 +309,7 @@ expand_relative_filename(FileName, Context) ->
                 end;
             (_, F) ->
                 F
-        end, "", Context#ale_context.include_dirs),
+        end, "", IncDirs ++ TrailDirs),
     case ExpandedFileName of
         "" -> throw({error, {not_found, FileName}});
         ExpandedFileName ->
