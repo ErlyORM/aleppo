@@ -54,7 +54,7 @@ process_tree(ParseTree, Options) ->
                 undefined -> Dict0;
                 Module ->
                     dict:store('MODULE', [{atom, 1, Module}],
-                               dict:store('MODULE_NAME',
+                               dict:store('MODULE_STRING',
                                           [{string, 1, atom_to_list(Module)}],
                                           Dict0))
             end,
