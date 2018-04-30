@@ -1,7 +1,17 @@
 # Change Log
 
-## [1.0.1](https://github.com/inaka/aleppo/tree/1.0.1)
+## [1.1.0](https://github.com/inaka/aleppo/tree/1.1.0) (2018-04-30)
+[Full Changelog](https://github.com/inaka/aleppo/compare/1.0.1...1.1.0)
 
+**Fixed bugs:**
+
+- MODULE\_NAME instead of MODULE\_STRING [\#49](https://github.com/inaka/aleppo/pull/49) ([elbrujohalcon](https://github.com/elbrujohalcon))
+
+**Merged pull requests:**
+
+- Updgrade from Upstream [\#50](https://github.com/inaka/aleppo/pull/50) ([elbrujohalcon](https://github.com/elbrujohalcon))
+
+## [1.0.1](https://github.com/inaka/aleppo/tree/1.0.1) (2018-04-20)
 [Full Changelog](https://github.com/inaka/aleppo/compare/1.0.0...1.0.1)
 
 **Closed issues:**
