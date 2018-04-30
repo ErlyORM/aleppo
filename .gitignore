@@ -1,3 +1,4 @@
+.awconfig
 /.settings/
 /.project
 /_build
@@ -7,3 +8,4 @@ rebar.lock
 /ebin
 /doc
 .rebar
+/logs
