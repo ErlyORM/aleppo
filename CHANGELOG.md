@@ -1,5 +1,16 @@
 # Change Log
 
+## [1.1.1](https://github.com/inaka/aleppo/tree/1.1.1) (2018-06-29)
+[Full Changelog](https://github.com/inaka/aleppo/compare/1.1.0...1.1.1)
+
+**Closed issues:**
+
+- invalid pre18 value on mac computer [\#52](https://github.com/inaka/aleppo/issues/52)
+
+**Merged pull requests:**
+
+- Fix pre18 expression [\#53](https://github.com/inaka/aleppo/pull/53) ([f3c0](https://github.com/f3c0))
+
 ## [1.1.0](https://github.com/inaka/aleppo/tree/1.1.0) (2018-04-30)
 [Full Changelog](https://github.com/inaka/aleppo/compare/1.0.1...1.1.0)
 
@@ -9,6 +20,7 @@
 
 **Merged pull requests:**
 
+- Version Bump to 1.1.0 [\#51](https://github.com/inaka/aleppo/pull/51) ([elbrujohalcon](https://github.com/elbrujohalcon))
 - Updgrade from Upstream [\#50](https://github.com/inaka/aleppo/pull/50) ([elbrujohalcon](https://github.com/elbrujohalcon))
 
 ## [1.0.1](https://github.com/inaka/aleppo/tree/1.0.1) (2018-04-20)
