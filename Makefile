@@ -1,6 +1,6 @@
-REBAR=./rebar3
 GIT = git
-REBAR_VER = 3.2.0
+REBAR = rebar3
+REBAR_VER = 3.6.2
 
 all: compile
 

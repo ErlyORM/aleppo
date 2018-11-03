@@ -1,11 +1,16 @@
 %% -*- mode: erlang -*-
-{application, aleppo,
- [{description, "Aleppo: ALternative Erlang Pre-ProcessOr"},
-  {vsn, "0.9.3"},
-  {modules, []},
-  {applications, [kernel, stdlib]},
-  {registered, []},
-  {maintainers,["ErlyORM"]},
-  {licenses,["MIT/X11"]},
-  {links,[{"Github","https://github.com/ErlyORM/aleppo"}]}
- ]}.
+{application, aleppo, [
+    {description, "Aleppo: ALternative Erlang Pre-ProcessOr"},
+    {vsn, "0.9.4"},
+    {modules, []},
+    {applications, [
+        kernel,
+        stdlib
+    ]},
+    {registered, []},
+    {maintainers, ["ErlyORM"]},
+    {licenses, ["MIT/X11"]},
+    {links, [
+        {"Github", "https://github.com/ErlyORM/aleppo"}
+    ]}
+]}.
